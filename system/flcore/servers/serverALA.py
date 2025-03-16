@@ -5,17 +5,6 @@ import time
 from flcore.clients.clientALA import *
 from utils.data_utils import read_client_data, read_client_data_gefl
 from threading import Thread
-from torchvision import datasets
-
-def dict_iid(dataset, num_users):
-
-    num_items = int(len(dataset)/num_users)
-    dict_users, all_idxs = {}, [i for i in range(len(dataset))]
-
-    for i in range(num_users):
-        dict_users[i] = set(np.random.choice(all_idxs, num_items, replace=False))
-        all_idxs = list(set(all_idxs) - dict_users[i])
-    return dict_users
 
 
 class FedALA(object):
@@ -41,10 +30,8 @@ class FedALA(object):
 
         self.times = times
         self.eval_gap = args.eval_gap
+        self.logger = args.logger
 
-        dataset_train = datasets.MNIST('.data/mnist', train=True, download=True)
-        dict_users = dict_iid(dataset_train, int(1/args.partial_data*args.num_clients))
-        args.dict_users = dict_users
         self.set_clients(args, clientALA)
 
         print(f"\nJoin ratio / total clients: {self.join_ratio} / {self.num_clients}")
@@ -61,8 +48,11 @@ class FedALA(object):
             if i%self.eval_gap == 0:
                 print(f"\n-------------Round number: {i}-------------")
                 print("\nEvaluate global model")
-                self.evaluate()
-
+                if i == self.global_rounds:
+                    self.evaluate(end=True)
+                else:
+                    self.evaluate()
+                    
             for client in self.selected_clients:
                 client.train()
 
@@ -86,10 +76,9 @@ class FedALA(object):
         for i in range(self.num_clients):
             train_data = read_client_data_gefl(self.dataset, i, args.dict_users, is_train=True)
             test_data = read_client_data_gefl(self.dataset, i, args.dict_users, is_train=False)
-            # train_data = 
-            # test_data = 
+
             client = clientObj(args, 
-                            id=i, 
+                            id=10*self.times+i,
                             train_samples=len(train_data), 
                             test_samples=len(test_data))
             self.clients.append(client)
@@ -166,7 +155,7 @@ class FedALA(object):
 
         return ids, num_samples, losses
 
-    def evaluate(self, acc=None, loss=None):
+    def evaluate(self, acc=None, loss=None, end=None):
         stats = self.test_metrics()
         stats_train = self.train_metrics()
 
@@ -188,6 +177,8 @@ class FedALA(object):
 
         print("Averaged Train Loss: {:.4f}".format(train_loss))
         print("Averaged Test Accurancy: {:.4f}".format(test_acc))
+        if end:
+            self.logger.info("{} Averaged Test Accurancy: {:.4f}".format(self.times, test_acc))
         print("Averaged Test AUC: {:.4f}".format(test_auc))
         print("Std Test Accurancy: {:.4f}".format(np.std(accs)))
         print("Std Test AUC: {:.4f}".format(np.std(aucs)))
