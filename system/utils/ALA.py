@@ -68,10 +68,11 @@ class ALA:
         """
 
         # randomly sample partial local training data
-        rand_ratio = self.rand_percent / 100
-        rand_num = int(rand_ratio*len(self.train_data))
-        rand_idx = random.randint(0, len(self.train_data)-rand_num)
-        rand_loader = DataLoader(self.train_data[rand_idx:rand_idx+rand_num], self.batch_size, drop_last=False)
+        # rand_ratio = self.rand_percent / 100
+        # rand_num = int(rand_ratio*len(self.train_data))
+        # rand_idx = random.randint(0, len(self.train_data)-rand_num)
+        # rand_loader = DataLoader(self.train_data[rand_idx:rand_idx+rand_num], self.batch_size, drop_last=False)
+        rand_loader = DataLoader(self.train_data, self.batch_size)
 
 
         # obtain the references of the parameters
@@ -83,8 +84,11 @@ class ALA:
             return
 
         # preserve all the updates in the lower layers
+        # fc.weight & fc.bias is only applies FedALA
+        # [:-2] denotes model [:end-2] => fc1 here
+        # clone global model of lower layers
         for param, param_g in zip(params[:-self.layer_idx], params_g[:-self.layer_idx]):
-            param.data = param_g.data.clone()
+            param.data = param_g.data.clone() # this updates parameters of local_model as well
 
 
         # temp local model only for weight learning
@@ -92,9 +96,9 @@ class ALA:
         params_t = list(model_t.parameters())
 
         # only consider higher layers
-        params_p = params[-self.layer_idx:]
-        params_gp = params_g[-self.layer_idx:]
-        params_tp = params_t[-self.layer_idx:]
+        params_p = params[-self.layer_idx:] # local model parameters
+        params_gp = params_g[-self.layer_idx:] # global model parameters
+        params_tp = params_t[-self.layer_idx:] # temp local model params
 
         # frozen the lower layers to reduce computational cost in Pytorch
         for param in params_t[:-self.layer_idx]:

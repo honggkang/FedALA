@@ -6,7 +6,7 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from sklearn.preprocessing import label_binarize
 from sklearn import metrics
-from utils.data_utils import read_client_data
+from utils.data_utils import read_client_data, read_client_data_gefl
 from utils.ALA import ALA
 
 
@@ -30,8 +30,9 @@ class clientALA(object):
         self.eta = args.eta
         self.rand_percent = args.rand_percent
         self.layer_idx = args.layer_idx
+        self.dict_users = args.dict_users
 
-        train_data = read_client_data(self.dataset, self.id, is_train=True)
+        train_data = read_client_data_gefl(self.dataset, self.id, args.dict_users, is_train=True)
         self.ALA = ALA(self.id, self.loss, train_data, self.batch_size, 
                     self.rand_percent, self.layer_idx, self.eta, self.device)
 
@@ -59,13 +60,14 @@ class clientALA(object):
     def load_train_data(self, batch_size=None):
         if batch_size == None:
             batch_size = self.batch_size
-        train_data = read_client_data(self.dataset, self.id, is_train=True)
+        # train_data = read_client_data(self.dataset, self.id, is_train=True)
+        train_data = read_client_data_gefl(self.dataset, self.id, self.dict_users, is_train=True)
         return DataLoader(train_data, batch_size, drop_last=True, shuffle=False)
 
     def load_test_data(self, batch_size=None):
         if batch_size == None:
             batch_size = self.batch_size
-        test_data = read_client_data(self.dataset, self.id, is_train=False)
+        test_data = read_client_data_gefl(self.dataset, self.id, self.dict_users, is_train=False)
         return DataLoader(test_data, batch_size, drop_last=True, shuffle=False)
 
     def test_metrics(self, model=None):

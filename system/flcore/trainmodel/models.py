@@ -52,7 +52,8 @@ class FedAvgCNN(nn.Module):
     def forward(self, x):
         out = self.conv1(x)
         out = self.conv2(out)
-        out = torch.flatten(out, 1)
+        # out = torch.flatten(out, 1)
+        out = out.view(out.size(0),-1)
         out = self.fc1(out)
         out = self.fc(out)
         return out

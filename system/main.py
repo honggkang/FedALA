@@ -31,7 +31,7 @@ def run(args):
         # Generate args.model
         if model_str == "cnn":
             if args.dataset[:5] == "mnist":
-                args.model = FedAvgCNN(in_features=1, num_classes=args.num_classes, dim=1024).to(args.device)
+                args.model = FedAvgCNN(in_features=1, num_classes=args.num_classes, dim=1600).to(args.device) # 1024 for 28x28
             elif args.dataset[:5] == "Cifar":
                 args.model = FedAvgCNN(in_features=3, num_classes=args.num_classes, dim=1600).to(args.device)
             else:
@@ -85,7 +85,7 @@ if __name__ == "__main__":
                         help="Ratio of clients per round")
     parser.add_argument('-rjr', "--random_join_ratio", type=bool, default=False,
                         help="Random ratio of clients per round")
-    parser.add_argument('-nc', "--num_clients", type=int, default=20,
+    parser.add_argument('-nc', "--num_clients", type=int, default=10,
                         help="Total number of clients")
     parser.add_argument('-pv', "--prev", type=int, default=0,
                         help="Previous Running times")
@@ -95,9 +95,11 @@ if __name__ == "__main__":
                         help="Rounds gap for evaluation")
    
     parser.add_argument('-et', "--eta", type=float, default=1.0)
-    parser.add_argument('-s', "--rand_percent", type=int, default=80)
+    parser.add_argument('-s', "--rand_percent", type=int, default=100)
     parser.add_argument('-p', "--layer_idx", type=int, default=2,
                         help="More fine-grained than its original paper.")
+    parser.add_argument('-pd', "--partial_data", type=float, default=0.1,
+                        help="amount of partial data")
 
     args = parser.parse_args()
 
