@@ -107,8 +107,8 @@ def run(args):
                     args.model = CNN5b().to(args.device)
                 elif i == 9:
                     args.model = CNN5c().to(args.device)
-            elif args.dataset[:5] == "fmnist":
-                from flcore.trainmodel.mnist_models import CNN2, CNN3, CNN3b, CNN3c, CNN4, CNN4b, CNN4c, CNN5, CNN5b, CNN5c
+            elif args.dataset == "fmnist" or args.dataset == "svhn":
+                from flcore.trainmodel.fmnist_models import CNN2, CNN3, CNN3b, CNN3c, CNN4, CNN4b, CNN4c, CNN5, CNN5b, CNN5c
                 if i == 0:
                     args.model = CNN2().to(args.device)
                 elif i == 1:
@@ -169,7 +169,7 @@ if __name__ == "__main__":
     parser.add_argument('-dev', "--device", type=str, default="cuda",
                         choices=["cpu", "cuda"])
     parser.add_argument('-did', "--device_id", type=str, default="0")
-    parser.add_argument('-data', "--dataset", type=str, default="mnist")
+    parser.add_argument('-data', "--dataset", type=str, default="svhn")
     parser.add_argument('-nb', "--num_classes", type=int, default=10)
     parser.add_argument('-m', "--model", type=str, default="cnn")
     parser.add_argument('-lbs', "--batch_size", type=int, default=64)

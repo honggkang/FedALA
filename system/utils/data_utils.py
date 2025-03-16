@@ -66,12 +66,28 @@ def read_data_gefl(dataset, idx, dict_users, is_train=True):
             transforms.Resize(32),
             transforms.Normalize((0.5,), (0.5,)),
         ])
+    elif dataset == 'svhn':
+        transform_train = transforms.Compose([
+            # transforms.Pad(padding=2),
+            # transforms.RandomCrop(size=(32, 32)),
+            # transforms.ColorJitter(brightness=63. / 255., saturation=[0.5, 1.5], contrast=[0.2, 1.8]),
+            transforms.ToTensor(),
+            transforms.Normalize((0.4376821, 0.4437697, 0.47280442), (0.19803012, 0.20101562, 0.19703614))
+        ])
+
+        transform_test = transforms.Compose([
+                transforms.ToTensor(),
+                transforms.Normalize((0.4376821, 0.4437697, 0.47280442), (0.19803012, 0.20101562, 0.19703614))
+            ])
         
     if is_train:
         if dataset == 'mnist':
             dataset_train = datasets.MNIST('.data/mnist', train=True, download=True, transform=transform_train)
         elif dataset == 'fmnist':
             dataset_train = datasets.FashionMNIST('.data/fmnist', train=True, download=True, transform=transform_train)
+        elif dataset == 'svhn':
+            dataset_train = datasets.SVHN('.data/svhn', split='train', download=True, transform=transform_train)
+
         train_data = DatasetSplit(dataset_train, dict_users[idx])
  
         # # {'x': array([[[[-1., -1., -1., ..., -1., -1., -1.],
@@ -84,6 +100,9 @@ def read_data_gefl(dataset, idx, dict_users, is_train=True):
             dataset_test = datasets.MNIST('.data/mnist', train=False, download=True, transform=transform_test)
         elif dataset == 'fmnist':
             dataset_test = datasets.FashionMNIST('.data/fmnist', train=False, download=True, transform=transform_test)
+        elif dataset == 'svhn':
+            dataset_test = datasets.SVHN('.data/svhn', split='test', download=True, transform=transform_test)
+
         test_data = dataset_test
 
         return test_data
