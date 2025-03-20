@@ -78,7 +78,7 @@ class FedALA(object):
             test_data = read_client_data_gefl(self.dataset, i, args.dict_users, is_train=False)
 
             client = clientObj(args, 
-                            id=10*self.times+i,
+                            id=args.num_clients*self.times+i,
                             train_samples=len(train_data), 
                             test_samples=len(test_data))
             self.clients.append(client)

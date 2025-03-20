@@ -87,52 +87,38 @@ def run(args):
             if args.dataset[:5] == "mnist":
                 from flcore.trainmodel.mnist_models import CNN2, CNN3, CNN3b, CNN3c, CNN4, CNN4b, CNN4c, CNN5, CNN5b, CNN5c
                 # args.model = FedAvgCNN(in_features=1, num_classes=args.num_classes, dim=1600).to(args.device) # 1024 for 28x28
-                if i == 0:
-                    args.model = CNN2().to(args.device)
-                elif i == 1:
-                    args.model = CNN3().to(args.device)
-                elif i == 2:
-                    args.model = CNN3b().to(args.device)
-                elif i == 3:
-                    args.model = CNN3c().to(args.device)
-                elif i == 4:
-                    args.model = CNN4().to(args.device)
-                elif i == 5:
-                    args.model = CNN4b().to(args.device)
-                elif i == 6:
-                    args.model = CNN4c().to(args.device)
-                elif i == 7:
-                    args.model = CNN5().to(args.device)
-                elif i == 8:
-                    args.model = CNN5b().to(args.device)
-                elif i == 9:
-                    args.model = CNN5c().to(args.device)
-            elif args.dataset == "fmnist" or args.dataset == "svhn":
+            elif args.dataset == "fmnist":
                 from flcore.trainmodel.fmnist_models import CNN2, CNN3, CNN3b, CNN3c, CNN4, CNN4b, CNN4c, CNN5, CNN5b, CNN5c
-                if i == 0:
-                    args.model = CNN2().to(args.device)
-                elif i == 1:
-                    args.model = CNN3().to(args.device)
-                elif i == 2:
-                    args.model = CNN3b().to(args.device)
-                elif i == 3:
-                    args.model = CNN3c().to(args.device)
-                elif i == 4:
-                    args.model = CNN4().to(args.device)
-                elif i == 5:
-                    args.model = CNN4b().to(args.device)
-                elif i == 6:
-                    args.model = CNN4c().to(args.device)
-                elif i == 7:
-                    args.model = CNN5().to(args.device)
-                elif i == 8:
-                    args.model = CNN5b().to(args.device)
-                elif i == 9:
-                    args.model = CNN5c().to(args.device)                    
-            elif args.dataset[:5] == "Cifar":
-                args.model = FedAvgCNN(in_features=3, num_classes=args.num_classes, dim=1600).to(args.device)
-            else:
-                args.model = FedAvgCNN(in_features=3, num_classes=args.num_classes, dim=10816).to(args.device)
+            elif args.dataset == "svhn":
+                from flcore.trainmodel.svhn_models import CNN2, CNN3, CNN3b, CNN3c, CNN4, CNN4b, CNN4c, CNN5, CNN5b, CNN5c
+            elif args.dataset == "cifar10":
+                from flcore.trainmodel.cifar10_models import CNN2, CNN3, CNN3b, CNN3c, CNN4, CNN4b, CNN4c, CNN5, CNN5b, CNN5c                
+
+            if i == 0:
+                args.model = CNN2().to(args.device)
+            elif i == 1:
+                args.model = CNN3().to(args.device)
+            elif i == 2:
+                args.model = CNN3b().to(args.device)
+            elif i == 3:
+                args.model = CNN3c().to(args.device)
+            elif i == 4:
+                args.model = CNN4().to(args.device)
+            elif i == 5:
+                args.model = CNN4b().to(args.device)
+            elif i == 6:
+                args.model = CNN4c().to(args.device)
+            elif i == 7:
+                args.model = CNN5().to(args.device)
+            elif i == 8:
+                args.model = CNN5b().to(args.device)
+            elif i == 9:
+                args.model = CNN5c().to(args.device)
+
+            # elif args.dataset[:5] == "Cifar":
+            #     args.model = FedAvgCNN(in_features=3, num_classes=args.num_classes, dim=1600).to(args.device)
+            # else:
+            #     args.model = FedAvgCNN(in_features=3, num_classes=args.num_classes, dim=10816).to(args.device)
 
         elif model_str == "resnet":
             args.model = torchvision.models.resnet18(pretrained=False, num_classes=args.num_classes).to(args.device)
